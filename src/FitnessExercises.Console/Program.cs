@@ -19,11 +19,8 @@ var exercise = new Exercise();
 // Find fields in the analyzed documents
 foreach (var document in analyzeResult.Documents)
 {
-    document.Fields.TryGetValue("TrainingType", out var trainingTypeField);     //TODO: How to simplify this?
-    exercise.Type = trainingTypeField?.Content ?? string.Empty;
-    
-    document.Fields.TryGetValue("Duration", out var durationField);
-    exercise.Duration = durationField?.Content ?? string.Empty;
+    exercise.Type = document.Fields["TrainingType"]?.Content ?? string.Empty;
+    exercise.Duration = document.Fields["Duration"]?.Content ?? string.Empty;
 }
 
 // Find tables in the analyzed document
