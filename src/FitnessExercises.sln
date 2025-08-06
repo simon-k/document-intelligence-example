@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessExercises.Console", "FitnessExercises.Console\FitnessExercises.Console.csproj", "{95756102-39B4-42C7-AAE9-0BE99CF5349A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionFolder", "{1B7C1173-CACD-4A9C-A26C-28D2ECC4EA66}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95756102-39B4-42C7-AAE9-0BE99CF5349A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95756102-39B4-42C7-AAE9-0BE99CF5349A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95756102-39B4-42C7-AAE9-0BE99CF5349A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95756102-39B4-42C7-AAE9-0BE99CF5349A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
