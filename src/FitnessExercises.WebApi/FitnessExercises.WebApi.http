@@ -1,6 +1,17 @@
-@FitnessExercises.WebApi_HostAddress = http://localhost:5277
-
 GET http://localhost:5277/weatherforecast/
 Accept: application/json
+
+###
+# Example: Upload sample image file to /upload endpoint
+POST http://localhost:5277/upload
+Accept: application/json
+Content-Type: multipart/form-data; boundary=UploadBoundary
+
+--UploadBoundary
+Content-Disposition: form-data; name="file"; filename="dummy exercises - arm day 1.jpg"
+Content-Type: image/jpeg
+
+< ../../data/dummy exercises - arm day 1.jpg
+--UploadBoundary--
 
 ###

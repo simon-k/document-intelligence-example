@@ -1,41 +1,31 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapPost("/upload", async (IFormFile file) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
+    if (file.Length == 0)  //TODO: TODO: Handle large files. The doc intelligence must have a limit.
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+        return Results.BadRequest("No file uploaded or file is empty.");
+    }
+    
+    //TODO: Better way to handle stream?  
+    await using var memoryStream = new MemoryStream();
+    await file.CopyToAsync(memoryStream);
+    memoryStream.Position = 0; // Reset position if further processing is needed
+
+    // Here you could pass 'memoryStream' to downstream processing (e.g., analyzer)
+    // For now, just return basic info.
+    return Results.Ok(new { file.FileName, Length = memoryStream.Length });
+    
+}).DisableAntiforgery(); // Disable antiforgery for API endpoint. Not good for production without proper security.
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -1,2 +1,11 @@
 # document-intelligence-example
 How to use Azure Document Intelligence
+
+
+
+# Anti Foregery on the upload endpoint
+Antiforgery has been disabled on the upload endpoint. Probably not a good idea in production.
+
+When using the upload endpoint in a web application, you might encounter issues with anti-forgery tokens. To resolve this, you can disable the anti-forgery token validation for the specific upload endpoint. This can be done by adding the `[IgnoreAntiforgeryToken]` attribute to the action method handling the upload.
+
+Alternatively you can use antiforgery tokens in your requests. This involves generating a token on the server side and including it in your upload requests. The server will then validate the token to ensure the request is legitimate.
