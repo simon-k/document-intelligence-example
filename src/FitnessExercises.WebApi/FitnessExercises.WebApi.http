@@ -1,0 +1,6 @@
+@FitnessExercises.WebApi_HostAddress = http://localhost:5277
+
+GET http://localhost:5277/weatherforecast/
+Accept: application/json
+
+###
