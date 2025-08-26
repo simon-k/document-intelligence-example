@@ -11,4 +11,51 @@
       <PackageReference Include="Azure.AI.DocumentIntelligence" Version="1.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="..\..\data\dummy exercises - arm day 1.jpg">
+        <Link>Data/dummy exercises - arm day 1.jpg</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\dummy exercises - arm day 1.pdf">
+        <Link>Data/dummy exercises - arm day 1.pdf</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\dummy exercises - arm day 2.jpeg">
+        <Link>Data/dummy exercises - arm day 2.jpeg</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\dummy exercises - arm day 2.pdf">
+        <Link>Data/dummy exercises - arm day 2.pdf</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\dummy exercises - back day.jpeg">
+        <Link>Data/dummy exercises - back day.jpeg</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\dummy exercises - back day.pdf">
+        <Link>Data/dummy exercises - back day.pdf</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\dummy exercises - chest day.pdf">
+        <Link>Data/dummy exercises - chest day.pdf</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\dummy exercises - leg day.pdf">
+        <Link>Data/dummy exercises - leg day.pdf</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\dummy exercises - mix day 1.jpeg">
+        <Link>Data/dummy exercises - mix day 1.jpeg</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\dummy exercises - mix day 1.pdf">
+        <Link>Data/dummy exercises - mix day 1.pdf</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\data\dummy exercises - neck day.pdf">
+        <Link>Data/dummy exercises - neck day.pdf</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

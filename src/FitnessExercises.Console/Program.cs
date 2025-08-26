@@ -1,21 +1,24 @@
 ﻿using Azure;
 using Azure.AI.DocumentIntelligence;
 using FitnessExercises.Console;
+using FitnessExercises.Console.Analyzer;
 
 var endpoint = Environment.GetEnvironmentVariable("AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT") ?? throw new InvalidOperationException("Environment variable AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT is not set.");
 var key = Environment.GetEnvironmentVariable("AZURE_DOCUMENT_INTELLIGENCE_KEY") ?? throw new InvalidOperationException("Environment variable AZURE_DOCUMENT_INTELLIGENCE_KEY is not set.");
 
 var client = new DocumentIntelligenceClient(new Uri(endpoint), new AzureKeyCredential(key));
 var modelId = "exercise-extractor-model";
-var fileUri = new Uri("https://raw.githubusercontent.com/simon-k/document-intelligence-example/refs/heads/main/data/dummy%20exercises%20-%20arm%20day%201.pdf");
 
-Console.WriteLine($"Analyzing document {fileUri}...");
+Console.Write("Analyze file or URL? (f/u): ");
+var choice = Console.ReadLine()?.Trim().ToLower();
 
-var operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, modelId, fileUri);
-var analyzeResult = operation.Value;
+var analyzer = (choice == "f") ? 
+    AnalyzerFactory.CreateAnalyzer("file")  : 
+    AnalyzerFactory.CreateAnalyzer("url");
+
+var analyzeResult = await analyzer.Analyze(client, modelId);
 
 var exercise = new Exercise();
-
 // Find fields in the analyzed documents
 foreach (var document in analyzeResult.Documents)
 {
