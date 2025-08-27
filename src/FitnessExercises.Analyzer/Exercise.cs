@@ -1,4 +1,4 @@
-namespace FitnessExercises.Console;
+namespace FitnessExercises.Analyzer;
 
 public class Exercise
 {

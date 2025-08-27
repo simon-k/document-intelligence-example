@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessExercises.WebApi", "FitnessExercises.WebApi\FitnessExercises.WebApi.csproj", "{D00FA3BB-481F-439C-8C2A-EC33668B73EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessExercises.Analyzer", "FitnessExercises.Analyzer\FitnessExercises.Analyzer.csproj", "{84FB3530-EF3C-4D0F-B4C6-39087B1F4F74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{D00FA3BB-481F-439C-8C2A-EC33668B73EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D00FA3BB-481F-439C-8C2A-EC33668B73EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D00FA3BB-481F-439C-8C2A-EC33668B73EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84FB3530-EF3C-4D0F-B4C6-39087B1F4F74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84FB3530-EF3C-4D0F-B4C6-39087B1F4F74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84FB3530-EF3C-4D0F-B4C6-39087B1F4F74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84FB3530-EF3C-4D0F-B4C6-39087B1F4F74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
