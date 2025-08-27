@@ -1,5 +1,6 @@
-var builder = WebApplication.CreateBuilder(args);
+using FitnessExercises.Analyzer;
 
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 
@@ -10,9 +11,14 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 
+var endpoint = app.Configuration["AzureDocumentIntelligence:Endpoint"] ?? throw new InvalidOperationException("AzureDocumentIntelligence:Endpoint is not configured.");
+var key = app.Configuration["AzureDocumentIntelligence:Key"] ?? throw new InvalidOperationException("AzureDocumentIntelligence:Key is not configured.");
+var modelId = app.Configuration["AzureDocumentIntelligence:ModelId"] ?? "exercise-extractor-model";
+
+
 app.MapPost("/upload", async (IFormFile file) =>
 {
-    if (file.Length == 0)  //TODO: TODO: Handle large files. The doc intelligence must have a limit.
+    if (file.Length == 0)  // TODO: Handle large files. The doc intelligence must have a limit.
     {
         return Results.BadRequest("No file uploaded or file is empty.");
     }
@@ -24,7 +30,11 @@ app.MapPost("/upload", async (IFormFile file) =>
 
     // Here you could pass 'memoryStream' to downstream processing (e.g., analyzer)
     // For now, just return basic info.
-    return Results.Ok(new { file.FileName, Length = memoryStream.Length });
+    var analyser = new Analyzer(endpoint, key, modelId);
+    var result = await analyser.AnalyzeAsync(memoryStream);
+    var exercises = ExerciseMapper.Map(result);
+    
+    return Results.Ok(exercises);
     
 }).DisableAntiforgery(); // Disable antiforgery for API endpoint. Not good for production without proper security.
 
