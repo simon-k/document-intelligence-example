@@ -2,6 +2,24 @@
 How to use Azure Document Intelligence
 
 
+# Run this
+1. Start the WebAPI project. 
+
+```
+cd FitnessExercises.WebAPI
+dotnet run
+```
+
+2. Run the Vue web application project.
+
+```
+cd FitnessExercisesWebApp
+npm install
+npm run dev
+```
+
+3. Go to a browser and open `http://localhost:3000`
+
 
 # Anti Foregery on the upload endpoint
 Antiforgery has been disabled on the upload endpoint. Probably not a good idea in production.

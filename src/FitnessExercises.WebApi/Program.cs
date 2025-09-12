@@ -38,4 +38,40 @@ app.MapPost("/upload", async (IFormFile file) =>
     
 }).DisableAntiforgery(); // Disable antiforgery for API endpoint. Not good for production without proper security.
 
+app.MapPost("/uploads", async (HttpRequest request) =>
+{
+    if (!request.HasFormContentType)
+    {
+        return Results.BadRequest("Request must be multipart/form-data.");
+    }
+
+    var form = await request.ReadFormAsync();
+    var files = form.Files;
+    //{
+    //    return Results.BadRequest("No files uploaded.");
+   // }
+
+    var allExercises = new List<object>(); // Adjust type based on your exercise model
+    var analyser = new Analyzer(endpoint, key, modelId);
+
+    foreach (var file in files)
+    {
+        if (file.Length == 0)
+        {
+            continue; // Skip empty files
+        }
+
+        await using var memoryStream = new MemoryStream();
+        await file.CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+
+        var result = await analyser.AnalyzeAsync(memoryStream);
+        var exercises = ExerciseMapper.Map(result);
+        allExercises.AddRange(exercises);
+    }
+
+    return Results.Ok(allExercises);
+
+}).DisableAntiforgery();
+
 app.Run();
