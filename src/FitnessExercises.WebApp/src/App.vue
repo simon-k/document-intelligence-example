@@ -15,13 +15,17 @@
               <label for="file-input" class="file-input-label">
                 <div class="file-input-content">
                   <div class="upload-icon">📁</div>
-                  <div v-if="!selectedFile" class="upload-text">
-                    Click to select an image file
+                  <div v-if="selectedFiles.length === 0" class="upload-text">
+                    Click to select image files (multiple files supported)
                   </div>
                   <div v-else class="selected-file">
-                    <strong>Selected:</strong> {{ selectedFile.name }}
-                    <br>
-                    <small>{{ formatFileSize(selectedFile.size) }}</small>
+                    <strong>Selected {{ selectedFiles.length }} file(s):</strong>
+                    <div v-for="file in selectedFiles.slice(0, 3)" :key="file.name" class="file-preview">
+                      {{ file.name }} ({{ formatFileSize(file.size) }})
+                    </div>
+                    <div v-if="selectedFiles.length > 3" class="more-files">
+                      ... and {{ selectedFiles.length - 3 }} more file(s)
+                    </div>
                   </div>
                 </div>
               </label>
@@ -30,6 +34,7 @@
                 type="file" 
                 @change="onFileSelect"
                 accept="image/*"
+                multiple
                 class="file-input"
                 :disabled="isUploading"
               />
@@ -37,14 +42,14 @@
 
             <button 
               type="submit" 
-              :disabled="!selectedFile || isUploading"
+              :disabled="selectedFiles.length === 0 || isUploading"
               class="upload-button"
             >
               <span v-if="isUploading" class="button-content">
                 <span class="spinner"></span>
                 Analyzing...
               </span>
-              <span v-else>🚀 Analyze Exercise</span>
+              <span v-else>🚀 Analyze {{ selectedFiles.length > 1 ? 'Exercises' : 'Exercise' }}</span>
             </button>
           </form>
 
@@ -58,29 +63,35 @@
       </div>
 
       <!-- Results Section -->
-      <div v-if="analysisResult" class="results-section">
+      <div v-if="analysisResults.length > 0" class="results-section">
         <div class="results-card">
           <h2>📊 Analysis Results</h2>
-          <div v-if="analysisResult.type" class="workout-summary">
-            <div class="workout-header">
-              <h3>{{ analysisResult.type }}</h3>
-              <div v-if="analysisResult.duration" class="duration">
-                <strong>Duration:</strong> {{ analysisResult.duration }}
+          <div v-for="(result, index) in analysisResults" :key="index" class="result-item">
+            <h3 class="file-result-header">{{ result.fileName }}</h3>
+            <div v-if="result.error" class="error-result">
+              <p><strong>Error:</strong> {{ result.error }}</p>
+            </div>
+            <div v-else-if="result.exercises && result.exercises.type" class="workout-summary">
+              <div class="workout-header">
+                <h4>{{ result.exercises.type }}</h4>
+                <div v-if="result.exercises.duration" class="duration">
+                  <strong>Duration:</strong> {{ result.exercises.duration }}
+                </div>
+              </div>
+              <div v-if="result.exercises.phases && result.exercises.phases.length > 0" class="phases-list">
+                <div v-for="(phase, phaseIndex) in result.exercises.phases" :key="phaseIndex" class="phase-item">
+                  <h5>{{ phase.name }}</h5>
+                  <ul v-if="phase.tasks && phase.tasks.length > 0" class="tasks-list">
+                    <li v-for="(task, taskIndex) in phase.tasks" :key="taskIndex" class="task-item">
+                      {{ task }}
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-            <div v-if="analysisResult.phases && analysisResult.phases.length > 0" class="phases-list">
-              <div v-for="(phase, index) in analysisResult.phases" :key="index" class="phase-item">
-                <h4>{{ phase.name }}</h4>
-                <ul v-if="phase.tasks && phase.tasks.length > 0" class="tasks-list">
-                  <li v-for="(task, taskIndex) in phase.tasks" :key="taskIndex" class="task-item">
-                    {{ task }}
-                  </li>
-                </ul>
-              </div>
+            <div v-else class="no-exercises">
+              <p>No workout data detected in this file.</p>
             </div>
-          </div>
-          <div v-else class="no-exercises">
-            <p>No workout data detected in the uploaded image.</p>
           </div>
         </div>
       </div>
@@ -104,46 +115,53 @@ export default {
   name: 'App',
   data() {
     return {
-      selectedFile: null,
+      selectedFiles: [],
       isUploading: false,
       uploadProgress: null,
-      analysisResult: null,
+      analysisResults: [],
       error: null
     }
   },
   methods: {
     onFileSelect(event) {
-      const file = event.target.files[0]
-      if (file) {
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-          this.error = 'Please select an image file (JPG, PNG, etc.)'
-          return
-        }
-        
-        // Validate file size (10MB limit)
-        if (file.size > 10 * 1024 * 1024) {
-          this.error = 'File size must be less than 10MB'
-          return
+      const files = Array.from(event.target.files)
+      if (files.length > 0) {
+        // Validate file types and sizes
+        const validFiles = []
+        for (const file of files) {
+          if (!file.type.startsWith('image/')) {
+            this.error = `File "${file.name}" is not an image file (JPG, PNG, etc.)`
+            return
+          }
+          
+          // Validate file size (10MB limit)
+          if (file.size > 10 * 1024 * 1024) {
+            this.error = `File "${file.name}" is too large. File size must be less than 10MB`
+            return
+          }
+          
+          validFiles.push(file)
         }
 
-        this.selectedFile = file
+        this.selectedFiles = validFiles
         this.error = null
-        this.analysisResult = null
+        this.analysisResults = []
       }
     },
 
     async uploadFile() {
-      if (!this.selectedFile) return
+      if (this.selectedFiles.length === 0) return
 
       this.isUploading = true
       this.uploadProgress = 0
       this.error = null
-      this.analysisResult = null
+      this.analysisResults = []
 
       try {
         const formData = new FormData()
-        formData.append('file', this.selectedFile)
+        this.selectedFiles.forEach((file, index) => {
+          formData.append('files', file)
+        })
 
         const response = await axios.post('/api/upload', formData, {
           headers: {
@@ -156,14 +174,14 @@ export default {
           }
         })
 
-        this.analysisResult = response.data
+        this.analysisResults = response.data
         this.uploadProgress = null
         
       } catch (error) {
         console.error('Upload error:', error)
         this.error = error.response?.data?.message || 
                    error.response?.data || 
-                   'Failed to analyze the image. Please try again.'
+                   'Failed to analyze the images. Please try again.'
         this.uploadProgress = null
       } finally {
         this.isUploading = false
@@ -261,6 +279,50 @@ export default {
 .selected-file {
   color: #27ae60;
   font-size: 1rem;
+}
+
+.file-preview {
+  font-size: 0.9rem;
+  margin: 2px 0;
+  color: #2c3e50;
+}
+
+.more-files {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.result-item {
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #f8f9fa;
+}
+
+.file-result-header {
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  background-color: #3498db;
+  color: white;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.error-result {
+  background-color: #ffeaea;
+  border-left: 4px solid #e74c3c;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.error-result p {
+  color: #a93226;
+  margin: 0;
 }
 
 .upload-button {
@@ -393,7 +455,8 @@ export default {
   border-bottom: 2px solid #ecf0f1;
 }
 
-.workout-header h3 {
+.workout-header h3,
+.workout-header h4 {
   margin: 0;
   color: #2c3e50;
   font-size: 1.4rem;
@@ -421,7 +484,8 @@ export default {
   background-color: #f8f9fa;
 }
 
-.phase-item h4 {
+.phase-item h4,
+.phase-item h5 {
   margin: 0 0 15px 0;
   color: white;
   font-size: 1.1rem;
