@@ -11,9 +11,17 @@ var key = app.Configuration["AzureDocumentIntelligence:Key"] ?? throw new Invali
 var modelId = app.Configuration["AzureDocumentIntelligence:ModelId"] ?? "exercise-extractor-model";
 
 
-app.MapPost("/upload", async (IFormFile[] files) =>
+app.MapPost("/upload", async (HttpRequest request) =>
 {
-    if (files == null || files.Length == 0)
+    if (!request.HasFormContentType)
+    {
+        return Results.BadRequest("Invalid content type.");
+    }
+
+    var form = await request.ReadFormAsync();
+    var files = form.Files;
+
+    if (files == null || files.Count == 0)
     {
         return Results.BadRequest("No files uploaded.");
     }
