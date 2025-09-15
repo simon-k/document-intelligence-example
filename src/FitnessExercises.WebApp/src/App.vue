@@ -11,6 +11,18 @@
           <h2>Upload Exercise Image</h2>
           
           <form @submit.prevent="uploadFile" class="upload-form">
+            <div class="name-input-container">
+              <label for="name-input" class="name-input-label">Exercise Name:</label>
+              <input 
+                id="name-input"
+                type="text" 
+                v-model="exerciseName"
+                placeholder="Enter a name for this exercise analysis"
+                class="name-input"
+                :disabled="isUploading"
+              />
+            </div>
+
             <div class="file-input-container">
               <label for="file-input" class="file-input-label">
                 <div class="file-input-content">
@@ -42,7 +54,7 @@
 
             <button 
               type="submit" 
-              :disabled="selectedFiles.length === 0 || isUploading"
+              :disabled="selectedFiles.length === 0 || isUploading || !exerciseName.trim()"
               class="upload-button"
             >
               <span v-if="isUploading" class="button-content">
@@ -67,7 +79,10 @@
         <div class="results-card">
           <h2>📊 Analysis Results</h2>
           <div v-for="(result, index) in analysisResults" :key="index" class="result-item">
-            <h3 class="file-result-header">{{ result.fileName }}</h3>
+            <div class="file-name-header">
+              <h3 class="file-result-header">{{ result.fileName }}</h3>
+              <div v-if="result.name" class="analysis-name">{{ result.name }}</div>
+            </div>
             <div v-if="result.error" class="error-result">
               <p><strong>Error:</strong> {{ result.error }}</p>
             </div>
@@ -116,6 +131,7 @@ export default {
   data() {
     return {
       selectedFiles: [],
+      exerciseName: '',
       isUploading: false,
       uploadProgress: null,
       analysisResults: [],
@@ -162,6 +178,7 @@ export default {
         this.selectedFiles.forEach((file, index) => {
           formData.append('files', file)
         })
+        formData.append('name', this.exerciseName.trim())
 
         const response = await axios.post('/api/upload', formData, {
           headers: {
@@ -176,6 +193,15 @@ export default {
 
         this.analysisResults = response.data
         this.uploadProgress = null
+        
+        // Clear the form after successful upload
+        this.selectedFiles = []
+        this.exerciseName = ''
+        // Reset file input
+        const fileInput = document.getElementById('file-input')
+        if (fileInput) {
+          fileInput.value = ''
+        }
         
       } catch (error) {
         console.error('Upload error:', error)
@@ -241,6 +267,38 @@ export default {
   font-size: 1.5rem;
 }
 
+.name-input-container {
+  margin-bottom: 20px;
+}
+
+.name-input-label {
+  display: block;
+  margin-bottom: 5px;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.name-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.name-input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.name-input:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
 .file-input-container {
   margin-bottom: 20px;
 }
@@ -301,8 +359,16 @@ export default {
   background-color: #f8f9fa;
 }
 
+.file-name-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
 .file-result-header {
-  margin: 0 0 15px 0;
+  margin: 0;
   color: #2c3e50;
   font-size: 1.1rem;
   font-weight: 600;
@@ -311,6 +377,15 @@ export default {
   color: white;
   border-radius: 6px;
   display: inline-block;
+}
+
+.analysis-name {
+  background-color: #27ae60;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .error-result {
