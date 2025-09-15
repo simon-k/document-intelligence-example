@@ -164,8 +164,7 @@ export default {
 
         this.selectedFiles = validFiles
         this.error = null
-        this.analysisResults = []
-        this.exerciseAnalysisName = ''
+        this.clearAnalysisResults()
       }
     },
 
@@ -175,8 +174,7 @@ export default {
       this.isUploading = true
       this.uploadProgress = 0
       this.error = null
-      this.analysisResults = []
-      this.exerciseAnalysisName = ''
+      this.clearAnalysisResults()
 
       try {
         const formData = new FormData()
@@ -210,7 +208,6 @@ export default {
         // Clear the form after successful upload
         this.selectedFiles = []
         this.exerciseName = ''
-        this.exerciseAnalysisName = ''
         // Reset file input
         const fileInput = document.getElementById('file-input')
         if (fileInput) {
@@ -238,6 +235,11 @@ export default {
 
     clearError() {
       this.error = null
+    },
+
+    clearAnalysisResults() {
+      this.analysisResults = []
+      this.exerciseAnalysisName = ''
     }
   }
 }
