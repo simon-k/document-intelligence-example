@@ -2,7 +2,7 @@
   <div class="app-container">
     <header class="header">
       <h1>🏋️ Fitness Exercise Analyzer</h1>
-      <p>Upload your fitness exercise images, PDFs, or Word documents to extract exercise data using AI Document Intelligence</p>
+      <p>Upload your fitness exercise images or PDFs to extract exercise data using AI Document Intelligence</p>
     </header>
 
     <main class="main-content">
@@ -28,7 +28,7 @@
                 <div class="file-input-content">
                   <div class="upload-icon">📁</div>
                   <div v-if="selectedFiles.length === 0" class="upload-text">
-                    Click to select files (images, PDFs, or Word documents - multiple files supported)
+                    Click to select files (images or PDFs - multiple files supported)
                   </div>
                   <div v-else class="selected-file">
                     <strong>Selected {{ selectedFiles.length }} file(s):</strong>
@@ -45,7 +45,7 @@
                 id="file-input"
                 type="file" 
                 @change="onFileSelect"
-                accept="image/*,.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                accept="image/*,.pdf,application/pdf"
                 multiple
                 class="file-input"
                 :disabled="isUploading"
@@ -148,13 +148,12 @@ export default {
         // Validate file types and sizes
         const validFiles = []
         for (const file of files) {
-          // Check if file is image, PDF, or DOCX
+          // Check if file is image or PDF
           const isImage = file.type.startsWith('image/')
           const isPdf = file.type === 'application/pdf'
-          const isDocx = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
           
-          if (!isImage && !isPdf && !isDocx) {
-            this.error = `File "${file.name}" is not a supported file type. Please select images (JPG, PNG, etc.), PDF files, or Word documents (.docx)`
+          if (!isImage && !isPdf) {
+            this.error = `File "${file.name}" is not a supported file type. Please select images (JPG, PNG, etc.) or PDF files`
             return
           }
           
