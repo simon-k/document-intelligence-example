@@ -78,10 +78,12 @@
       <div v-if="analysisResults.length > 0" class="results-section">
         <div class="results-card">
           <h2>📊 Analysis Results</h2>
+          <div v-if="exerciseAnalysisName" class="analysis-title">
+            <h3>{{ exerciseAnalysisName }}</h3>
+          </div>
           <div v-for="(result, index) in analysisResults" :key="index" class="result-item">
             <div class="file-name-header">
               <h3 class="file-result-header">{{ result.fileName }}</h3>
-              <div v-if="result.name" class="analysis-name">{{ result.name }}</div>
             </div>
             <div v-if="result.error" class="error-result">
               <p><strong>Error:</strong> {{ result.error }}</p>
@@ -135,6 +137,7 @@ export default {
       isUploading: false,
       uploadProgress: null,
       analysisResults: [],
+      exerciseAnalysisName: '',
       error: null
     }
   },
@@ -162,6 +165,7 @@ export default {
         this.selectedFiles = validFiles
         this.error = null
         this.analysisResults = []
+        this.exerciseAnalysisName = ''
       }
     },
 
@@ -172,6 +176,7 @@ export default {
       this.uploadProgress = 0
       this.error = null
       this.analysisResults = []
+      this.exerciseAnalysisName = ''
 
       try {
         const formData = new FormData()
@@ -191,12 +196,21 @@ export default {
           }
         })
 
-        this.analysisResults = response.data
+        // Handle new response structure with name at top level
+        if (response.data && response.data.results) {
+          this.analysisResults = response.data.results
+          this.exerciseAnalysisName = response.data.name || ''
+        } else {
+          // Fallback for old format
+          this.analysisResults = response.data
+          this.exerciseAnalysisName = ''
+        }
         this.uploadProgress = null
         
         // Clear the form after successful upload
         this.selectedFiles = []
         this.exerciseName = ''
+        this.exerciseAnalysisName = ''
         // Reset file input
         const fileInput = document.getElementById('file-input')
         if (fileInput) {
@@ -386,6 +400,23 @@ export default {
   border-radius: 6px;
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+.analysis-title {
+  text-align: center;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+.analysis-title h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .error-result {

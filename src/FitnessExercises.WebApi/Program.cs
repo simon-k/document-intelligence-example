@@ -33,7 +33,7 @@ app.MapPost("/upload", async (HttpRequest request) =>
     {
         if (file.Length == 0)
         {
-            results.Add(new { fileName = file.FileName, name = name, error = "File is empty." });
+            results.Add(new { fileName = file.FileName, error = "File is empty." });
             continue;
         }
         
@@ -49,15 +49,15 @@ app.MapPost("/upload", async (HttpRequest request) =>
             var result = await analyser.AnalyzeAsync(memoryStream);
             var exercises = ExerciseMapper.Map(result);
             
-            results.Add(new { fileName = file.FileName, name = name, exercises = exercises });
+            results.Add(new { fileName = file.FileName, exercises = exercises });
         }
         catch (Exception ex)
         {
-            results.Add(new { fileName = file.FileName, name = name, error = ex.Message });
+            results.Add(new { fileName = file.FileName, error = ex.Message });
         }
     }
     
-    return Results.Ok(results);
+    return Results.Ok(new { name = name, results = results });
     
 }).DisableAntiforgery(); // Disable antiforgery for API endpoint. Not good for production without proper security.
 
