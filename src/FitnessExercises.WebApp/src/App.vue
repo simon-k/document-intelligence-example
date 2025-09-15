@@ -2,13 +2,13 @@
   <div class="app-container">
     <header class="header">
       <h1>🏋️ Fitness Exercise Analyzer</h1>
-      <p>Upload your fitness exercise images to extract exercise data using AI Document Intelligence</p>
+      <p>Upload your fitness exercise images, PDFs, or Word documents to extract exercise data using AI Document Intelligence</p>
     </header>
 
     <main class="main-content">
       <div class="upload-section">
         <div class="upload-card">
-          <h2>Upload Exercise Image</h2>
+          <h2>Upload Exercise Document</h2>
           
           <form @submit.prevent="uploadFile" class="upload-form">
             <div class="name-input-container">
@@ -28,7 +28,7 @@
                 <div class="file-input-content">
                   <div class="upload-icon">📁</div>
                   <div v-if="selectedFiles.length === 0" class="upload-text">
-                    Click to select image files (multiple files supported)
+                    Click to select files (images, PDFs, or Word documents - multiple files supported)
                   </div>
                   <div v-else class="selected-file">
                     <strong>Selected {{ selectedFiles.length }} file(s):</strong>
@@ -45,7 +45,7 @@
                 id="file-input"
                 type="file" 
                 @change="onFileSelect"
-                accept="image/*"
+                accept="image/*,.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 multiple
                 class="file-input"
                 :disabled="isUploading"
@@ -148,8 +148,13 @@ export default {
         // Validate file types and sizes
         const validFiles = []
         for (const file of files) {
-          if (!file.type.startsWith('image/')) {
-            this.error = `File "${file.name}" is not an image file (JPG, PNG, etc.)`
+          // Check if file is image, PDF, or DOCX
+          const isImage = file.type.startsWith('image/')
+          const isPdf = file.type === 'application/pdf'
+          const isDocx = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          
+          if (!isImage && !isPdf && !isDocx) {
+            this.error = `File "${file.name}" is not a supported file type. Please select images (JPG, PNG, etc.), PDF files, or Word documents (.docx)`
             return
           }
           
