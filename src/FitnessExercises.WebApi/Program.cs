@@ -22,6 +22,10 @@ app.MapPost("/upload", async (HttpRequest request) =>
     var files = form.Files;
     var name = form["name"].FirstOrDefault();
 
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        return Results.BadRequest("The 'name' parameter is required and cannot be empty.");
+    }
     if (files == null || files.Count == 0)
     {
         return Results.BadRequest("No files uploaded.");
