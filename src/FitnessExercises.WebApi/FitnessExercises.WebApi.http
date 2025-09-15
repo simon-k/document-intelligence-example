@@ -8,6 +8,10 @@ Accept: application/json
 Content-Type: multipart/form-data; boundary=UploadBoundary
 
 --UploadBoundary
+Content-Disposition: form-data; name="name"
+
+My Workout Session
+--UploadBoundary
 Content-Disposition: form-data; name="file"; filename="dummy exercises - arm day 1.jpg"
 Content-Type: image/jpeg
 
