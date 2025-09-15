@@ -20,7 +20,12 @@ app.MapPost("/upload", async (HttpRequest request) =>
 
     var form = await request.ReadFormAsync();
     var files = form.Files;
+    var name = form["name"].FirstOrDefault();
 
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        return Results.BadRequest("The 'name' parameter is required and cannot be empty.");
+    }
     if (files == null || files.Count == 0)
     {
         return Results.BadRequest("No files uploaded.");
@@ -56,7 +61,7 @@ app.MapPost("/upload", async (HttpRequest request) =>
         }
     }
     
-    return Results.Ok(results);
+    return Results.Ok(new { name = name, results = results });
     
 }).DisableAntiforgery(); // Disable antiforgery for API endpoint. Not good for production without proper security.
 
