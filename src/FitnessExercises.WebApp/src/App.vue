@@ -64,13 +64,6 @@
               <span v-else>🚀 Analyze {{ selectedFiles.length > 1 ? 'Exercises' : 'Exercise' }}</span>
             </button>
           </form>
-
-          <div v-if="uploadProgress" class="progress-container">
-            <div class="progress-bar">
-              <div class="progress-fill" :style="{ width: uploadProgress + '%' }"></div>
-            </div>
-            <small>{{ uploadProgress }}% complete</small>
-          </div>
         </div>
       </div>
 
@@ -135,7 +128,6 @@ export default {
       selectedFiles: [],
       exerciseName: '',
       isUploading: false,
-      uploadProgress: null,
       analysisResults: [],
       exerciseAnalysisName: '',
       error: null
@@ -176,13 +168,12 @@ export default {
       if (this.selectedFiles.length === 0) return
 
       this.isUploading = true
-      this.uploadProgress = 0
       this.error = null
       this.clearAnalysisResults()
 
       try {
         const formData = new FormData()
-        this.selectedFiles.forEach((file, index) => {
+        this.selectedFiles.forEach(file => {
           formData.append('files', file)
         })
         formData.append('name', this.exerciseName.trim())
@@ -190,11 +181,6 @@ export default {
         const response = await axios.post('/api/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
-          },
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.lengthComputable) {
-              this.uploadProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-            }
           }
         })
 
@@ -207,8 +193,7 @@ export default {
           this.analysisResults = response.data
           this.exerciseAnalysisName = ''
         }
-        this.uploadProgress = null
-        
+
         // Clear the form after successful upload
         this.selectedFiles = []
         this.exerciseName = ''
@@ -217,13 +202,12 @@ export default {
         if (fileInput) {
           fileInput.value = ''
         }
-        
+
       } catch (error) {
         console.error('Upload error:', error)
-        this.error = error.response?.data?.message || 
-                   error.response?.data || 
+        this.error = error.response?.data?.message ||
+                   error.response?.data ||
                    'Failed to analyze the images. Please try again.'
-        this.uploadProgress = null
       } finally {
         this.isUploading = false
       }
@@ -389,23 +373,13 @@ export default {
 
 .file-result-header {
   margin: 0;
-  color: #2c3e50;
+  color: white;
   font-size: 1.1rem;
   font-weight: 600;
   padding: 8px 12px;
   background-color: #3498db;
-  color: white;
   border-radius: 6px;
   display: inline-block;
-}
-
-.analysis-name {
-  background-color: #27ae60;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
 }
 
 .analysis-title {
@@ -450,12 +424,6 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.upload-button.uploading,
-.upload-button.uploading:disabled {
-  background-color: #3498db !important;
-  cursor: progress;
-}
-
 .upload-button:hover:not(:disabled) {
   background-color: #2980b9;
 }
@@ -465,56 +433,6 @@ export default {
   cursor: not-allowed;
 }
 
-.progress-container {
-  margin-top: 15px;
-  text-align: center;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  background-color: #ecf0f1;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 5px;
-}
-
-.progress-fill {
-  height: 100%;
-  background-color: #3498db;
-  transition: width 0.3s ease;
-}
-
-.exercises-list {
-  display: grid;
-  gap: 15px;
-}
-
-.exercise-item {
-  border: 1px solid #e1e8ed;
-  border-radius: 8px;
-  padding: 20px;
-  background-color: #f8f9fa;
-}
-
-.exercise-item h3 {
-  margin: 0 0 15px 0;
-  color: #2c3e50;
-  font-size: 1.2rem;
-}
-
-.exercise-details {
-  display: grid;
-  gap: 8px;
-}
-
-.detail-item {
-  color: #5a6c7d;
-}
-
-.detail-item strong {
-  color: #2c3e50;
-}
 
 .no-exercises {
   text-align: center;
@@ -641,3 +559,4 @@ export default {
   100% { transform: rotate(360deg); }
 }
 </style>
+
