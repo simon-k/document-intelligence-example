@@ -51,8 +51,7 @@ app.MapPost("/upload", async (HttpRequest request) =>
 
             // Here you could pass 'memoryStream' to downstream processing (e.g., analyzer)
             var analyser = new DocumentIntelligenceAnalyzer(endpoint, key, modelId);
-            var result = await analyser.AnalyzeAsync(memoryStream);
-            var exercises = ExerciseMapper.Map(result);
+            var exercises = await analyser.AnalyzeAsync(memoryStream);
             
             results.Add(new { fileName = file.FileName, exercises = exercises });
         }

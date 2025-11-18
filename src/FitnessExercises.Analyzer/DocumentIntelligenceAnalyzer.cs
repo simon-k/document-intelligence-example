@@ -10,9 +10,13 @@ public class DocumentIntelligenceAnalyzer(string endpoint, string key, string mo
 
     public async Task<Exercise> AnalyzeAsync(string filePath)
     {
-        using var stream = File.OpenRead(filePath);
-        var operation = await _client.AnalyzeDocumentAsync(WaitUntil.Completed, modelId, BinaryData.FromStream(stream));
-
+        // Open file as stream
+        await using var stream = File.OpenRead(filePath);
+        
+        // Analyze document with Document Intelligence
+        var operation = await _client.AnalyzeDocumentAsync(WaitUntil.Completed, modelId, await BinaryData.FromStreamAsync(stream));
+        
+        // Map result to Exercise model
         var exercise = ExerciseMapper.Map(operation.Value);
         
         return exercise;
