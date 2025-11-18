@@ -10,7 +10,7 @@ public class DocumentIntelligenceAnalyzer(string endpoint, string key, string mo
 
     public async Task<Exercise> AnalyzeAsync(string filePath)
     {
-        // Open file as stream
+        // Read as file stream
         await using var stream = File.OpenRead(filePath);
         
         // Analyze document with Document Intelligence
