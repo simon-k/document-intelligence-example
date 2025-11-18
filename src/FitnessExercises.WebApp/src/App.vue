@@ -544,6 +544,12 @@ export default {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .spinner {
   width: 20px;
   height: 20px;
