@@ -1,4 +1,4 @@
-namespace FitnessExercises.Analyzer;
+namespace FitnessExercises.Analyzer.Models;
 
 public class Exercise
 {

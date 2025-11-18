@@ -1,4 +1,5 @@
 using FitnessExercises.Analyzer;
+using FitnessExercises.Analyzer.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,7 @@ app.UseHttpsRedirection();
 
 var endpoint = app.Configuration["AzureDocumentIntelligence:Endpoint"] ?? throw new InvalidOperationException("AzureDocumentIntelligence:Endpoint is not configured.");
 var key = app.Configuration["AzureDocumentIntelligence:Key"] ?? throw new InvalidOperationException("AzureDocumentIntelligence:Key is not configured.");
-var modelId = app.Configuration["AzureDocumentIntelligence:ModelId"] ?? "exercise-extractor-model";
+var modelId = app.Configuration["AzureDocumentIntelligence:ModelId"] ?? "role-card-model-a";
 
 
 app.MapPost("/upload", async (HttpRequest request) =>
@@ -49,7 +50,7 @@ app.MapPost("/upload", async (HttpRequest request) =>
             memoryStream.Position = 0; // Reset position if further processing is needed
 
             // Here you could pass 'memoryStream' to downstream processing (e.g., analyzer)
-            var analyser = new Analyzer(endpoint, key, modelId);
+            var analyser = new DocumentIntelligenceAnalyzer(endpoint, key, modelId);
             var result = await analyser.AnalyzeAsync(memoryStream);
             var exercises = ExerciseMapper.Map(result);
             
